@@ -23,7 +23,6 @@ func main() {
         panic(err.Error())
     }
 
-    // create a watcher for the ConfigMap
     configMapInformer := cache.NewSharedIndexInformer(
         &cache.ListWatch{
             ListFunc: func(options metav1.ListOptions) (object runtime.Object, e error) {
@@ -38,12 +37,17 @@ func main() {
             cache.Indexers{},
             )
 
-    // create a controller for the deployment
     deploymentController := cache.NewSharedIndexInformer(
         &cache.ListWatch{
             ListFunc: func(options metav1.ListOptions) (object runtime.Object, e error) {
                 return clientset.AppsV1().Deployments("default").List(context.TODO(), options)
-            }
-
-            WatchFunc: func(options metav1.ListOptions) (watch.Interface, error)
-        }
+            },
+            WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
+                return clientset.AppsV1().ConfigMaps("default").Watch(context.TODO(), options)
+            },
+            },
+            &corev1.Deployment{},
+            0,
+            cache.Indexers{},
+            )
+}

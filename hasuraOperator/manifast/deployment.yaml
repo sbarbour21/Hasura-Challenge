@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: k8-operator
+spec:
+    selector:
+        matchLabels:
+            app: k8-operator
+    template:
+        metadata:
+            labels:
+                app: k8-operator
+        spec:
+            containers:
+            - name: k8-operator
+              image: hasura/httpserver:lates
+              imagePullPolicy: Never
+              ports:
+              - containerPort: 8080
+            restartPolicy: Always
